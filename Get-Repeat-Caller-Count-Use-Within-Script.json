@@ -1,0 +1,51 @@
+{
+  "name": "Get Repeat Caller Count - Use with script button ONLY",
+  "integrationType": "purecloud-data-actions",
+  "actionType": "custom",
+  "config": {
+    "request": {
+      "requestUrlTemplate": "/api/v2/analytics/conversations/details/query",
+      "requestType": "POST",
+      "headers": {},
+      "requestTemplate": "{\n \"interval\": \"${input.Interval}\",\n \"order\": \"asc\",\n \"orderBy\": \"conversationStart\",\n \"paging\": {\n  \"pageSize\": 25,\n  \"pageNumber\": 1\n },\n \"segmentFilters\": [\n  {\n   \"type\": \"and\",\n   \"predicates\": [\n    {\n     \"type\": \"dimension\",\n     \"dimension\": \"ani\",\n     \"operator\": \"matches\",\n     \"value\": \"${input.ANI}\"\n    }\n   ]\n  }\n ],\n \"conversationFilters\": [\n  {\n   \"type\": \"and\",\n   \"predicates\": [\n    {\n     \"type\": \"dimension\",\n     \"dimension\": \"conversationEnd\",\n     \"operator\": \"exists\",\n     \"value\": null\n    }\n   ]\n  }\n ]\n}"
+    },
+    "response": {
+      "translationMap": {
+        "count": "$.conversations.size()"
+      },
+      "translationMapDefaults": {
+        "count": "0"
+      },
+      "successTemplate": "{ \"Count\": ${count} }"
+    }
+  },
+  "contract": {
+    "input": {
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "Interval": {
+            "description": "UTC, example: 2020-07-10T05:00:00.000Z/2020-07-11T05:00:00.000Z",
+            "type": "string"
+          },
+          "ANI": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "output": {
+      "successSchema": {
+        "type": "object",
+        "properties": {
+          "Count": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "secure": false
+}
